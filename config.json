@@ -1,0 +1,9 @@
+{
+  "secretkey": "AwWX5qpZYEVzNARwXFbSUXzeFnQuY2yldeb4LBcSDBkyLKc9RInAuTGe43UzSKyfJSAbYk5CkRZBVrNxm0YRiYP8DWB72VXYuoCGHP7S0GTSFDPQ43VYmP2P7bqmro",
+  "webPort" :   "8080",
+
+  "databaseName": "studentenhuis",
+  "databaseHost": "localhost",
+  "username": "studentenhuis_user",
+  "password": "secret"
+}
