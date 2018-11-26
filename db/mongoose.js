@@ -9,18 +9,11 @@ var userSchema = new mongoose.Schema({
 });
 var User = mongoose.model("User", userSchema)
 
-var commentSchema = new mongoose.Schema();
-commentSchema.add({
+var threadSchema = new mongoose.Schema();
+threadSchema.add({
   name: String,
   karma: Number,
-  comments: [commentSchema]
-});
-
-var threadSchema = new mongoose.Schema({
-  title: String,
-  content: String,
-  karma: Number,
-  comments: [commentSchema]
+  comments: [threadSchema]
 });
 var Thread = mongoose.model("Thread", threadSchema)
 
