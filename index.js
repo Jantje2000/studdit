@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 
 //Make sure that all routes will have to be authenticated
 app.use('/user', require('./routes/user.routes'));
+app.use('/thread', require('./routes/thread.routes'));
+
 
 // This will be called when no other routes are found
 app.use('*', function (req, res, next) {
