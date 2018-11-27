@@ -29,7 +29,7 @@ router.post('/:id', (req, res) => {
                   });
                 });
               } else {
-                res.send(404);
+                res.send(422);
               }
             });
           }
@@ -54,7 +54,7 @@ router.delete("/:id", (req, res) => {
         res.send(comment);
       });
     } else {
-      res.send(404);
+      res.send(422);
     }
   });
 });
@@ -72,7 +72,7 @@ router.post('/upvote/:id', (req, res) => {
             res.send(comment);
           });
         } else {
-          res.send(404);
+          res.send(422);
         }
       });
     } else {
@@ -94,7 +94,7 @@ router.post('/downvote/:id', (req, res) => {
             res.send(comment);
           });
         } else {
-          res.send(404);
+          res.send(422);
         }
       });
     } else {

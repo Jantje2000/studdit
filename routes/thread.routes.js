@@ -131,7 +131,7 @@ router.get('/:id', (req, res) => {
         res.send(result);
       });
     } else {
-      res.send(404);
+      res.send(422);
     }
   })
 });
@@ -163,7 +163,7 @@ router.put("/:id", (req, res) => {
         res.send(thread);
       });
     } else {
-      res.send(404);
+      res.send(422);
     }
   });
 });
@@ -179,7 +179,7 @@ router.delete("/:id", (req, res) => {
         res.send(thread);
       });
     } else {
-      res.send(404);
+      res.send(422);
     }
   });
 });
@@ -197,7 +197,7 @@ router.post('/upvote/:id', (req, res) => {
             res.send(thread);
           });
         } else {
-          res.send(404);
+          res.send(422);
         }
       });
     } else {
@@ -219,7 +219,7 @@ router.post('/downvote/:id', (req, res) => {
             res.send(thread);
           });
         } else {
-          res.send(404);
+          res.send(422);
         }
       });
     } else {
