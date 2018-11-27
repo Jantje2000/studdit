@@ -12,10 +12,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 //Make sure that all routes will have to be authenticated
-app.use('/api', require('./routes/auth_routes')); // the login routes
-app.use('/api', require('./routes/dormitory_routes')); // the dormitory routes
-app.use('/api', require('./routes/meal_routes'));
-app.use('/api', require('./routes/participant_routes'));
+app.use('/user', require('./routes/user.routes'));
 
 // This will be called when no other routes are found
 app.use('*', function (req, res, next) {
