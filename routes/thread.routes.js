@@ -33,7 +33,7 @@ router.get('/upvotes', (req, res) => {
         "downvotes": { "$size": "$downvotes" },
       }
     },
-    { "$sort": { "upvotesize": -1 } }
+    { "$sort": { "upvotes": -1 } }
   ]).exec((err, results) => {
     if (err) return console.error(err);
     if (results) {
@@ -86,7 +86,7 @@ router.get('/comments', (req, res) => {
         "comments": { "$size": "$children" }
       },
     },
-    { "$sort": { "commentsize": -1 } }
+    { "$sort": { "comments": -1 } }
   ]).exec((err, results) => {
     if (err) return console.error(err);
     if (results) {
@@ -141,7 +141,7 @@ router.post('/', (req, res) => {
     mongoose.User.findOne({ username: req.body.username }, (err, user) => {
       if (err) return console.error(err);
       if (user) {
-        var thread = new mongoose.Thread({ username: req.body.username, title: req.body.title, content: req.body.content })
+        var thread = new mongoose.Thread({ user: user._id, title: req.body.title, content: req.body.content })
         thread.save(() => {
           res.send(thread);
         });
