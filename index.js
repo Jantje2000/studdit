@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.use('/user', require('./routes/user.routes'));
 app.use('/thread', require('./routes/thread.routes'));
 app.use('/comment', require('./routes/comment.routes'));
+app.use('/friend', require('./routes/friend.routes'));
 
 
 // This will be called when no other routes are found

@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require("../db/mongoose")
+const mongoose = require("../db/mongoose");
 
 // For debug purposes
-// router.get('/', (req, res) => {
-//   mongoose.User.find((err, result) => {
-//     if (err) return console.error(err);
-//     res.send(result);
-//   })
-// });
+router.get('/', (req, res) => {
+  mongoose.User.find((err, result) => {
+    if (err) return console.error(err);
+    res.send(result);
+  })
+});
 
 router.post('/', (req, res) => {
   if(req.body.username && req.body.password){
