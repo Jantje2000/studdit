@@ -1,7 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Types = mongoose.Types;
-mongoose.connect('mongodb://localhost/test',{ useNewUrlParser: true });
+
+if(process.env.NODE_ENV == "testCloud" || process.env.NODE_ENV == "production"){
+  mongoose.connect('mongodb+srv://student:MxhMgvIyLlxN717D@cluster0-vc8us.azure.mongodb.net/test?retryWrites=true',{ useNewUrlParser: true });
+} else {
+  mongoose.connect('mongodb://localhost/test',{ useNewUrlParser: true });
+}
+
+
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 

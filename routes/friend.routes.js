@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const neo4j = require('neo4j-driver').v1;
 const mongoose = require("../db/mongoose");
-const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'Test123$'));
+const driver = require("../db/neo4j").driver;
+
 
 router.post('/', (req, res) => {
     const session = driver.session();
