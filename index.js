@@ -11,6 +11,8 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+process.env.NODE_ENV = "testCloud";
+
 //Make sure that all routes will have to be authenticated
 app.use('/user', require('./routes/user.routes'));
 app.use('/thread', require('./routes/thread.routes'));

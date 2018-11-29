@@ -1,32 +1,100 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require("../db/mongoose")
+const driver = require("../db/neo4j").driver;
 
 router.get('/', (req, res) => {
   mongoose.Thread.aggregate([
     {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
       "$project": {
-        "username": 1,
+        "username": { "$arrayElemAt": ["$user.username", 0] },
         "title": 1,
         "content": 1,
         "upvotes": { "$size": "$upvotes" },
         "downvotes": { "$size": "$downvotes" },
       }
     }]).exec((err, results) => {
-    if (err) return console.error(err);
-    if (results) {
-      res.send(results);
-    } else {
-      res.send(404);
-    }
-  })
+      if (err) return console.error(err);
+      if (results) {
+        res.send(results);
+      } else {
+        res.send(404);
+      }
+    })
+});
+
+router.get('/friend/:username/:depth', (req, res) => {
+  if (req.params["username"] && req.params["depth"]) {
+    const session = driver.session();
+
+    //this can go wrong if depth is no number (or injection maybe)
+    session.run('MATCH (user:Person { name: $username })-[:friend*1..' + req.params["depth"] + ']->(f) WHERE f <> user RETURN f', { username: req.params["username"] })
+      .then((result) => {
+        var friends = [];
+        result.records.forEach(function (record) {
+          friends[friends.length] = record.get('f').properties.name;
+        });
+
+        mongoose.Thread.aggregate([
+          {
+            $lookup: {
+              from: "users",
+              localField: "user",
+              foreignField: "_id",
+              as: "user"
+            }
+          },
+          {
+            "$project": {
+              "username": { "$arrayElemAt": ["$user.username", 0] },
+              "title": 1,
+              "content": 1,
+              "upvotes": { "$size": "$upvotes" },
+              "downvotes": { "$size": "$downvotes" },
+            }
+          },
+          { "$match": { "username": { "$in": friends } } }
+        ]).exec((err, results) => {
+          if (err) return console.error(err);
+          if (results) {
+            res.send(results);
+          } else {
+            res.send(404);
+          }
+        });
+      }).catch((err) => {
+        console.log(err);
+        session.close();
+        res.send(400);
+      });
+
+
+  } else {
+    res.send(404)
+  }
 });
 
 router.get('/upvotes', (req, res) => {
   mongoose.Thread.aggregate([
     {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
       "$project": {
-        "username": 1,
+        "username": { "$arrayElemAt": ["$user.username", 0] },
         "title": 1,
         "content": 1,
         "upvotes": { "$size": "$upvotes" },
@@ -47,8 +115,16 @@ router.get('/upvotes', (req, res) => {
 router.get('/karma', (req, res) => {
   mongoose.Thread.aggregate([
     {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
       "$project": {
-        "username": 1,
+        "username": { "$arrayElemAt": ["$user.username", 0] },
         "title": 1,
         "content": 1,
         "upvotes": { "$size": "$upvotes" },
@@ -69,16 +145,26 @@ router.get('/karma', (req, res) => {
 
 router.get('/comments', (req, res) => {
   mongoose.Thread.aggregate([
-    {"$graphLookup":{
-      "from":"comments",
-      "startWith":"$comments",
-      "connectFromField":"comments",
-      "connectToField":"_id",
-      "as":"children"
-    }},
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
+      }
+    },
+    {
+      "$graphLookup": {
+        "from": "comments",
+        "startWith": "$comments",
+        "connectFromField": "comments",
+        "connectToField": "_id",
+        "as": "children"
+      }
+    },
     {
       "$project": {
-        "username": 1,
+        "username": { "$arrayElemAt": ["$user.username", 0] },
         "title": 1,
         "content": 1,
         "upvotesize": { "$size": "$upvotes" },
@@ -99,23 +185,35 @@ router.get('/comments', (req, res) => {
 
 router.get('/:id', (req, res) => {
   mongoose.Thread.aggregate([
-    { "$match" : { "_id" : mongoose.Types.ObjectId(req.params["id"]) } },
-    {"$graphLookup":{
-      "from":"comments",
-      "startWith":"$comments",
-      "connectFromField":"comments",
-      "connectToField":"_id",
-      "as":"children"
-    }},
-    { "$addFields": { 
-      "children": { 
-        "upvotes": { "$size": "$upvotes" },
-        "downvotes": { "$size": "$downvotes" }
+    { "$match": { "_id": mongoose.Types.ObjectId(req.params["id"]) } },
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "user"
       }
-    }},
+    },
+    {
+      "$graphLookup": {
+        "from": "comments",
+        "startWith": "$comments",
+        "connectFromField": "comments",
+        "connectToField": "_id",
+        "as": "children"
+      }
+    },
+    {
+      "$addFields": {
+        "children": {
+          "upvotes": { "$size": "$upvotes" },
+          "downvotes": { "$size": "$downvotes" }
+        }
+      }
+    },
     {
       "$project": {
-        "user": 1,
+        "username": { "$arrayElemAt": ["$user.username", 0] },
         "title": 1,
         "content": 1,
         "upvotes": { "$size": "$upvotes" },
@@ -126,8 +224,8 @@ router.get('/:id', (req, res) => {
   ]).exec((err, result) => {
     if (err) return console.error(err);
     if (result) {
-      mongoose.User.populate(result, [{path: "user", select: "username"}, {path: "comments.user", select: "username"}],(err, result)=>{
-      if (err) return console.error(err);
+      mongoose.User.populate(result, [{ path: "user", select: "username" }, { path: "comments.user", select: "username" }], (err, result) => {
+        if (err) return console.error(err);
         res.send(result);
       });
     } else {
