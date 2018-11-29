@@ -6,8 +6,8 @@ chai.should();
 
 chai.use(chaiHttp);
 
-describe('Non-existent endpoint', ()=> {
-    it('Should give an error when a path doesn\'t exist', (done) =>{
+describe('Non-existent endpoint', () => {
+    it('Should give an error when a path doesn\'t exist', (done) => {
         chai.request(server)
             .get('')
             .end((err, res) => {

@@ -6,7 +6,7 @@ chai.should();
 
 chai.use(chaiHttp);
 
-describe('Comment routes', ()=> {
+describe('Comment routes', () => {
 
     let id = null;
     let commentId = null;
@@ -14,11 +14,11 @@ describe('Comment routes', ()=> {
     before((done) => {
         chai.request(server)
             .post('/user')
-            .send({username: 'Tester1', password: 'Tester1'})
+            .send({ username: 'Tester1', password: 'Tester1' })
             .then(() => {
                 chai.request(server)
                     .post('/thread')
-                    .send({username: 'Tester1', title: 'Test', content: "Dit is een testje van mij"})
+                    .send({ username: 'Tester1', title: 'Test', content: "Dit is een testje van mij" })
                     .end((err, res) => {
                         id = res.body._id.toString();
 
@@ -27,10 +27,23 @@ describe('Comment routes', ()=> {
             });
     });
 
-    it('Should add comment to thread', (done) =>{
+    after((done) => {
+        chai.request(server)
+            .delete('/user')
+            .send({ username: 'Tester1', password: 'Tester1' })
+            .then(() => {
+                chai.request(server)
+                    .delete('/thread/' + id)
+                    .end(() => {
+                        done();
+                    });
+            });
+    });
+
+    it('Should add comment to thread', (done) => {
         chai.request(server)
             .post('/comment/' + id)
-            .send({username: "Tester1", content: "test"})
+            .send({ username: "Tester1", content: "test" })
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.an('object');
@@ -47,7 +60,7 @@ describe('Comment routes', ()=> {
             })
     });
 
-    it('Should return Wrong post body when not sending correct data', (done) =>{
+    it('Should return Wrong post body when not sending correct data', (done) => {
         chai.request(server)
             .post('/comment/' + id)
             .send()
@@ -60,10 +73,10 @@ describe('Comment routes', ()=> {
             })
     });
 
-    it('Should return comment object when upvoting', (done) =>{
+    it('Should return comment object when upvoting', (done) => {
         chai.request(server)
             .post('/comment/upvote/' + commentId)
-            .send({username: "Tester1"})
+            .send({ username: "Tester1" })
             .end((err, res) => {
                 res.should.have.status(200);
 
@@ -78,10 +91,10 @@ describe('Comment routes', ()=> {
             })
     });
 
-    it('Should return comment object when downvoting', (done) =>{
+    it('Should return comment object when downvoting', (done) => {
         chai.request(server)
             .post('/comment/downvote/' + commentId)
-            .send({username: "Tester1"})
+            .send({ username: "Tester1" })
             .end((err, res) => {
                 res.should.have.status(200);
 
