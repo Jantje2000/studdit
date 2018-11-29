@@ -167,7 +167,7 @@ router.get('/comments', (req, res) => {
         "username": { "$arrayElemAt": ["$user.username", 0] },
         "title": 1,
         "content": 1,
-        "upvotesize": { "$size": "$upvotes" },
+        "upvotes": { "$size": "$upvotes" },
         "downvotes": { "$size": "$downvotes" },
         "comments": { "$size": "$children" }
       },
@@ -223,10 +223,10 @@ router.get('/:id', (req, res) => {
     }
   ]).exec((err, result) => {
     if (err) return console.error(err);
-    if (result) {
+    if (result && result.length > 0) {
       mongoose.User.populate(result, [{ path: "user", select: "username" }, { path: "comments.user", select: "username" }], (err, result) => {
         if (err) return console.error(err);
-        res.send(result);
+        res.send(result[0]);
       });
     } else {
       res.send(422);

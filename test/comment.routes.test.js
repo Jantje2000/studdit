@@ -60,6 +60,26 @@ describe('Comment routes', () => {
             })
     });
 
+    it('Should add comment to comment', (done) => {
+        chai.request(server)
+            .post('/comment/' + commentId)
+            .send({ username: "Tester1", content: "test" })
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.an('object');
+
+                res.body.should.have.property('upvotes').eql([]);
+                res.body.should.have.property('downvotes').eql([]);
+                res.body.should.have.property('comments').eql([]);
+                res.body.should.have.property('user');
+                res.body.should.have.property('content').eql('test');
+
+                commentId = res.body._id;
+
+                done();
+            })
+    });
+
     it('Should return Wrong post body when not sending correct data', (done) => {
         chai.request(server)
             .post('/comment/' + id)
