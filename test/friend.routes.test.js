@@ -15,7 +15,7 @@ describe('Friend routes', ()=> {
             .then(() => {
                 chai.request(server)
                     .post('/user')
-                    .send({username: 'Tester1', password: 'Tester1'})
+                    .send({username: 'Tester2', password: 'Tester2'})
                     .end((err, res) => {
                         done();
                     });
