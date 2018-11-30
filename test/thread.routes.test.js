@@ -157,7 +157,7 @@ describe('Thread routes', () => {
 
         res.body[0].should.have.property('upvotes');
         res.body[0].should.have.property('downvotes');
-        res.body[0].should.have.property('comments');
+        res.body[0].should.have.property('comments').least(res.body[1].comments);
         res.body[0].should.have.property('username');
         res.body[0].should.have.property('content');
         res.body[0].should.have.property('title');
