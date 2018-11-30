@@ -139,8 +139,8 @@ describe('Thread routes', () => {
             res.body[0].should.have.property('downvotes');
             res.body[0].should.not.have.property('comments');
             res.body[0].should.have.property('username');
-            res.body[0].should.have.property('content').eql('test');
-            res.body[0].should.have.property('title').eql('test');
+            res.body[0].should.have.property('content');
+            res.body[0].should.have.property('title');
             res.body[0].should.have.property('karma').eql(res.body[0].upvotes - res.body[0].downvotes).least(res.body[1].karma);
 
             done();
@@ -159,8 +159,8 @@ describe('Thread routes', () => {
         res.body[0].should.have.property('downvotes');
         res.body[0].should.have.property('comments');
         res.body[0].should.have.property('username');
-        res.body[0].should.have.property('content').eql('test');
-        res.body[0].should.have.property('title').eql('test');
+        res.body[0].should.have.property('content');
+        res.body[0].should.have.property('title');
         done();
       });
   });
